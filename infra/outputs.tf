@@ -29,7 +29,7 @@ resource "local_file" "inventory_dev" {
   filename = "${path.module}/inventory_dev.ini"  # will create inventory.ini in root
   content  = data.template_file.ansible_inventory_dev.rendered
 }
-resource "local_file" "inventory_dev" {
+resource "local_file" "inventory_prod" {
   filename = "${path.module}/inventory_prod.ini"  # will create inventory.ini in root
   content  = data.template_file.ansible_inventory_prod.rendered
 }
