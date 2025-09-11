@@ -27,8 +27,9 @@ jobs:
       - name: Create Prod VM
         working-directory: infra
         run: |
-          echo "deploying production: ${{ github.ref_name }}"
-          terraform init -backend-config="path=terraform/prod/${{ github.ref_name }}"
+          echo "deploying production: TAG=${{ github.event.inputs.tag }}"
+          TAG=${{ github.event.inputs.tag }}
+          terraform init -backend-config="path=terraform/prod"
           terraform validate
           terraform plan -var-file="prod.tfvars"
           terraform apply -auto-approve -var-file="prod.tfvars"
@@ -69,11 +70,11 @@ jobs:
           CI_SSH_KEY: ${{ secrets.CI_SSH_KEY_PROD }}
         run: |
           mkdir -p ~/.ssh
-          echo "$CI_SSH_KEY_PROD" > ~/.ssh/id_rsa_tcloud_prod
+          echo "$CI_SSH_KEY" > ~/.ssh/id_rsa_tcloud_prod
           chmod 600 ~/.ssh/id_rsa_tcloud_prod
           touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
 
       - name: Run Ansible playbook
         working-directory: ansible
-        run: ansible-playbook playbook.yml -i inventory.ini
+        run: ansible-playbook playbook.yml -i inventory_prod.ini

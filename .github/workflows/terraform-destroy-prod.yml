@@ -30,6 +30,5 @@ jobs:
       - name: Destroy Prod VM
         working-directory: infra
         run: |
-          TAG=${{ github.event.inputs.tag }}
-          terraform init -backend-config="path=terraform/prod/$TAG"
+          terraform init -backend-config="path=terraform/prod"
           terraform destroy -auto-approve -var-file="prod.tfvars"

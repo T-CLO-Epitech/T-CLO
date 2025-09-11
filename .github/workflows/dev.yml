@@ -51,8 +51,8 @@ jobs:
       - name: Upload inventory.ini as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: inventory-file
-          path: infra/inventory.ini
+          name: inventory-file-dev
+          path: infra/inventory_dev.ini
 
       - name: Upload VM IP
         uses: actions/upload-artifact@v4
@@ -70,7 +70,7 @@ jobs:
       - name: Download inventory artifact
         uses: actions/download-artifact@v4
         with:
-          name: inventory-file
+          name: inventory-file-dev
           path: ansible   # where to place the downloaded file
 
       # - name: Install Ansible
@@ -108,7 +108,7 @@ jobs:
 
       - name: Run Ansible playbook
         working-directory: ansible
-        run: ansible-playbook playbook.yml -i inventory.ini
+        run: ansible-playbook playbook.yml -i inventory_dev.ini
 
   stress-test:
     needs: ansible
@@ -149,30 +149,30 @@ jobs:
           name: k6-html-report-stress-test
           path: k6-results/report.html
 
-  terraform-destroy:
-    needs: stress-test
-    runs-on: self-hosted
-    if: always()
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # terraform-destroy:
+  #   needs: stress-test
+  #   runs-on: self-hosted
+  #   if: always()
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.7 
+  #     - name: Set up Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: 1.5.7 
           
-      - name: Export Azure Service Principal creds for Terraform
-        run: |
-          echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
-          echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
-          echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
-          echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+  #     - name: Export Azure Service Principal creds for Terraform
+  #       run: |
+  #         echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
+  #         echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
+  #         echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
+  #         echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
-      - name: Destroy VM
-        working-directory: infra
-        run: | 
-          ls
-          terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
-          terraform destroy  -auto-approve -var-file="dev.tfvars" 
+  #     - name: Destroy VM
+  #       working-directory: infra
+  #       run: | 
+  #         ls
+  #         terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
+  #         terraform destroy  -auto-approve -var-file="dev.tfvars" 
   
