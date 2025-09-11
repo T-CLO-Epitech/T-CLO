@@ -35,6 +35,12 @@ jobs:
           terraform apply -auto-approve -var-file="prod.tfvars"
           terraform output -raw public_ip > vm_ip.txt
 
+      - name: Upload inventory.ini as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-file-prod
+          path: infra/inventory_prod.ini
+
       - name: Upload VM IP
         uses: actions/upload-artifact@v4
         with:
@@ -47,7 +53,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Download inventory artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory-file-prod
+          path: ansible   # where to place the downloaded file
 
+          
       - name: Download VM IP artifact
         uses: actions/download-artifact@v4
         with:
