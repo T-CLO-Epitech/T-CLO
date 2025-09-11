@@ -99,7 +99,7 @@ jobs:
           CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$CI_SSH_KEY" > ~/.ssh/id_rsa
+          echo "$CI_SSH_KEY" > ~/.ssh/id_rsa_tcloud
           chmod 600 ~/.ssh/id_rsa
           touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
