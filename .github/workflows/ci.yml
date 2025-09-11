@@ -8,16 +8,17 @@ on:
 jobs:
   Lint:
     runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: lint App
         run: find ./sample-app-master -type f -name "*.php" -exec php -l {} \;
-
+        
   terraform-apply:
     needs: Lint
-    runs-on: self-hosted    
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.7   # use a valid version (Terraform 1.13.0 does NOT exist)
-
+      
       - name: Export Azure Service Principal creds for Terraform
         run: |
           echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
@@ -37,11 +38,11 @@ jobs:
 
       - name: Create VM
         working-directory: infra
-        run: |
+        run: | 
           terraform init
           terraform validate
           terraform plan  -var-file="dev.tfvars"
-          terraform apply -auto-approve -var-file="dev.tfvars"
+          terraform apply -auto-approve -var-file="dev.tfvars" 
           touch vm_ip.txt
           terraform output -raw public_ip > vm_ip.txt
           terraform output -raw public_ip
@@ -60,11 +61,11 @@ jobs:
 
   ansible:
     needs: terraform-apply
-    runs-on: self-hosted    
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
       - name: Download inventory artifact
         uses: actions/download-artifact@v4
         with:
@@ -109,7 +110,8 @@ jobs:
 
   stress-test:
     needs: ansible
-    runs-on: self-hosted    steps:
+    runs-on: self-hosted
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -147,7 +149,8 @@ jobs:
 
   terraform-destroy:
     needs: stress-test
-    runs-on: self-hosted    if: always()
+    runs-on: self-hosted
+    if: always()
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -155,8 +158,8 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7
-
+          terraform_version: 1.5.7 
+          
       - name: Export Azure Service Principal creds for Terraform
         run: |
           echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
@@ -166,7 +169,8 @@ jobs:
 
       - name: Destroy VM
         working-directory: infra
-        run: |
+        run: | 
           ls
           terraform init
-          terraform destroy  -auto-approve -var-file="dev.tfvars"
+          terraform destroy  -auto-approve -var-file="dev.tfvars" 
+  
