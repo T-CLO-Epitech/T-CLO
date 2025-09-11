@@ -1,0 +1,8 @@
+#Configuration de Mysql
+mysql_database: app_database
+mysql_user: app_user
+mysql_password: app_password
+mysql_root_password: app_root_password
+mysql_port: 3306
+mysql_data_volume: db_data
+mysql_init_scripts_path: ./mysql-init
