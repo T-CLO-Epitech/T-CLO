@@ -1,9 +1,9 @@
-name: CI
+name: DEV
 
 on:
 
   pull_request:
-    branches: [ dev ]
+    branches: [ dev, main ]
 
 jobs:
   Lint:
