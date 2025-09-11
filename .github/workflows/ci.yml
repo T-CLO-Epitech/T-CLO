@@ -21,10 +21,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install unzip (Linux)
-        run: |
-          # sudo apt-get update
-          sudo apt-get install -y unzip
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
