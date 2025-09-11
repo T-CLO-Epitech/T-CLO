@@ -69,8 +69,8 @@ jobs:
           CI_SSH_KEY: ${{ secrets.CI_SSH_KEY_PROD }}
         run: |
           mkdir -p ~/.ssh
-          echo "$CI_SSH_KEY" > ~/.ssh/id_rsa_tcloud
-          chmod 600 ~/.ssh/id_rsa_tcloud
+          echo "$CI_SSH_KEY_PROD" > ~/.ssh/id_rsa_tcloud_prod
+          chmod 600 ~/.ssh/id_rsa_tcloud_prod
           touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
 
