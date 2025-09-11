@@ -2,7 +2,7 @@
 project_name = "TerraCloud"
 environment = "dev"
 location = "West Europe"
-vm_size = "Standard_B1s"
+vm_size = "Standard_B2ms"
 admin_username = "azureuser"
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC6zvkUWgL1Dbv4oey45+7moalB4R7I/okPjI+oM8wj0L6dPuPoFgVIp1rFiPTxTjUPxcaDm0sakMvjVkJ/3I8X3NleWbPJSZd+7UI5Z1zq8Ad581tYHlFrLLG9aGk/RJnqDXWr6blnLG+/lf7GZ6QaOq1XYOVdTTmpwL54cNfSiGRBwn6orhJgjbm4dVhRb6rH4Ftdpc263QznZ9yrOcQlvGr+yMyqRnXcdEMNGYOFYZ8Z/IEzHRrD0BvA2kbk1W/yMtOmXpcV939UvYH8kxgkxjCzD6ozf9YtJhf7Xt/EhldlpvI4hMf2LBPmgx3i9VCaJZQWp5rVvXjHTGLtdnOgoZVrMvETLcd4Js8IB6L2G7pdnkR6g+suDCxcndJsuzlM1Ga3WXRLMw9KhI+K5L5eC83ejglY8sPMTaKINIjGkxGfQEj3RpnUBV5otI0GzH/F9rTLQSudV/ftgVm6we87s5Bc4OkcEC2h2BL4oKi7Gn7814YxVGT1F2yE2xbyetDiMegVpCrUVdPuYBmODxyhmDMNsBdbVGQ6WRt/Rcj66fjLwl4+JF4z3cuZlgJj8X1285xwYEjCEBJ34xYyRpYG/QjkkhwVN+e6b5yz2t7EuwPiK8cWfjVOVsyNY0vXWQUZrrM9XYjF70AIaf6JmfAV9CvrcLfPZIT8krGgWkiSeQ== tech@terracloud.com"
 allow_ssh_from_cidr = "0.0.0.0/0"

@@ -61,7 +61,7 @@
     - name: Show Docker Version
       debug:
         var: docker_version.stdout
-    
+
     - name: Create directory for app
       file:
         path: /home/{{ ansible_user }}/app
@@ -142,4 +142,3 @@
         state: present
 
       when: curl_output.stdout != "200"
-
