@@ -8,7 +8,6 @@ on:
 jobs:
   Lint:
     runs-on: self-hosted
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -173,5 +172,4 @@ jobs:
           ls
           terraform init
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
-  
   
