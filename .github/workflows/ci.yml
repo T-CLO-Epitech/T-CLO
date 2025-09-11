@@ -39,7 +39,8 @@ jobs:
       - name: Create VM
         working-directory: infra
         run: | 
-          terraform init
+          echo "developer_name=${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
           terraform validate
           terraform plan  -var-file="dev.tfvars"
           terraform apply -auto-approve -var-file="dev.tfvars" 
@@ -172,6 +173,6 @@ jobs:
         working-directory: infra
         run: | 
           ls
-          terraform init
+          terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
   
