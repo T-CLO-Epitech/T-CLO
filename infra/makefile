@@ -7,7 +7,7 @@ PLAN=plan.out
 .PHONY: init validate fmt plan apply destroy output console import state workspace
 
 init:
-	@$(TF) init -var-file=dev.tfvars
+	@$(TF) init -var-file=dev.tfvars -backend-config="path=terraform/dev/$(shell git config user.name)
 
 validate:
 	@$(TF) validate -var-file=dev.tfvars
