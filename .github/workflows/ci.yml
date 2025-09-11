@@ -100,7 +100,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "$CI_SSH_KEY" > ~/.ssh/id_rsa_tcloud
-          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa_tcloud
           touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
 
