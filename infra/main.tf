@@ -1,6 +1,5 @@
 module "vm" {
   source           = "./modules/module1"
-
   project_name     = var.project_name
   environment      = var.environment
   location         = var.location
