@@ -6,3 +6,4 @@ infra/terraform.tfstate
 infra/terraform.tfstate.backup
 infra/inventory.ini
 infra/terraform.tfvars
+infra/plan.out
