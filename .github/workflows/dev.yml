@@ -1,9 +1,9 @@
-name: CI
+name: DEV
 
 on:
 
   pull_request:
-    branches: [ dev ]
+    branches: [ dev, main ]
 
 jobs:
   Lint:
@@ -51,8 +51,8 @@ jobs:
       - name: Upload inventory.ini as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: inventory-file
-          path: infra/inventory.ini
+          name: inventory-file-dev
+          path: infra/inventory_dev.ini
 
       - name: Upload VM IP
         uses: actions/upload-artifact@v4
@@ -70,13 +70,8 @@ jobs:
       - name: Download inventory artifact
         uses: actions/download-artifact@v4
         with:
-          name: inventory-file
+          name: inventory-file-dev
           path: ansible   # where to place the downloaded file
-
-      # - name: Install Ansible
-      #   run: |
-      #     python3 -m pip install --upgrade pip
-      #     pip install ansible
 
       - name: Download VM IP artifact
         uses: actions/download-artifact@v4
@@ -108,7 +103,7 @@ jobs:
 
       - name: Run Ansible playbook
         working-directory: ansible
-        run: ansible-playbook playbook.yml -i inventory.ini
+        run: ansible-playbook playbook.yml -i inventory_dev.ini
 
   stress-test:
     needs: ansible
