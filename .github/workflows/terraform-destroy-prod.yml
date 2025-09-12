@@ -32,3 +32,4 @@ jobs:
         run: |
           terraform init -backend-config="path=terraform/prod"
           terraform destroy -auto-approve -var-file="prod.tfvars"
+
