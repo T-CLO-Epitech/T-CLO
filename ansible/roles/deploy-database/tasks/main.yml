@@ -14,3 +14,10 @@
   template:
     src: mysql-docker-compose.j2
     dest: /home/{{ ansible_user }}/app/docker-compose.yml
+
+- name: Launch MySQL container
+  shell: docker compose up -d --remove-orphans --force-recreate
+  args:
+    chdir: /home/{{ ansible_user }}/app
+  become_user: "{{ ansible_user }}"
+
