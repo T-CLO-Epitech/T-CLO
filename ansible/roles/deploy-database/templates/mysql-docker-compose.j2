@@ -12,6 +12,8 @@ services:
       - "{{ mysql_port }}:3306"
     volumes:
       - {{ mysql_data_volume }}:/var/lib/mysql
+    networks:
+      - mysql-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "{{ mysql_user }}", "-p{{ mysql_password }}"]
       timeout: 5s
@@ -19,3 +21,7 @@ services:
 
 volumes:
   {{ mysql_data_volume }}:
+
+networks:
+  mysql-network:
+    driver: bridge

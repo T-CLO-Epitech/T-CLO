@@ -14,7 +14,7 @@ locals {
     database = {
       name = "database"
       size = var.vm_size
-      ports = ["22", "3306", "5432"]
+      ports = ["22", "3306"]
       tags = {
         Role = "database"
         Tier = "backend"
@@ -23,7 +23,7 @@ locals {
     webserver2 = {
       name = "webserver2"
       size = var.vm_size
-      ports = ["22", "3306", "5432"]
+      ports = ["22", "80", "443", "8080"]
       tags = {
         Role = "webserver2"
         Tier = "frontend"
@@ -152,19 +152,7 @@ resource "azurerm_network_security_group" "database_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "3306"
-    source_address_prefix      = "10.0.0.0/16"  # Limité au réseau virtuel
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "allow-postgresql"
-    priority                   = 120
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5432"
-    source_address_prefix      = "10.0.0.0/16"  # Limité au réseau virtuel
+    source_address_prefix      = "10.0.0.0/16"
     destination_address_prefix = "*"
   }
 
