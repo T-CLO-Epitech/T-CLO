@@ -90,4 +90,4 @@ jobs:
 
       - name: Run Ansible playbook
         working-directory: ansible
-        run: ansible-playbook playbook.yml -i inventory_prod.ini
+        run: ansible-playbook playbook.yml -i inventory_prod.ini --skip-tags dev

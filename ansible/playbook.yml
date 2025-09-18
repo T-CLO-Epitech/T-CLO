@@ -71,12 +71,14 @@
         group: "{{ ansible_user }}"
 
     - name: Archive app locally
+      tag: dev
       ansible.builtin.command:
         cmd: tar -czf /tmp/sample-app.tar.gz -C .. sample-app-master
       delegate_to: localhost
       run_once: true
 
     - name: Copy app archive to remote
+      tag: dev
       ansible.builtin.copy:
         src: /tmp/sample-app.tar.gz
         dest: /home/{{ ansible_user }}/app/sample-app.tar.gz
@@ -85,6 +87,7 @@
         group: "{{ ansible_user }}"
 
     - name: Extract app archive on remote
+      tag: dev
       ansible.builtin.unarchive:
         src: /home/{{ ansible_user }}/app/sample-app.tar.gz
         dest: /home/{{ ansible_user }}/app/
@@ -95,8 +98,15 @@
 
 
     - name: Launch Laravel app
+      tag: prod
       ansible.builtin.command:
         cmd: docker compose -f docker-compose-prod.yaml up -d 
+        chdir: /home/{{ ansible_user }}/app/sample-app-master
+
+    - name: Launch Laravel app
+      tag: dev
+      ansible.builtin.command:
+        cmd: docker compose up -d 
         chdir: /home/{{ ansible_user }}/app/sample-app-master
 
     - name: Curl app using VM public IP

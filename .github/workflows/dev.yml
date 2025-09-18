@@ -103,7 +103,7 @@ jobs:
 
       - name: Run Ansible playbook
         working-directory: ansible
-        run: ansible-playbook playbook.yml -i inventory_dev.ini
+        run: ansible-playbook playbook.yml -i inventory_dev.ini --skip-tags prod
 
   stress-test:
     needs: ansible
