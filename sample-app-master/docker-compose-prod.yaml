@@ -16,7 +16,7 @@ services:
   app:
     # set container name app
     container_name: app
-    image: ghcr.io/t-clo-epitech/app-prod:latest
+    image: vicous/t-clo-app-prod:latest
     ports:
       - "8081:80"
     environment:
