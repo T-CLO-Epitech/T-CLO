@@ -1,7 +1,7 @@
 name: DEV-to-MAIN
 
 on:
-  push:
+  pull_request:
     branches: [ main ]  # corrected pull_request → branches
 
 permissions:
