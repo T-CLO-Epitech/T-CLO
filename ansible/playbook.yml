@@ -1,5 +1,5 @@
 # Playbook to initialize a server with necessary packages and configurations
----
+#---
 - name: Install docker service
   hosts: all
   become: yes
@@ -14,10 +14,10 @@
   roles:
     - deploy-database
 
-#- name: Deploy Web Server
-#  hosts: webservers
-#  become: yes
-#  vars_files:
-#    - roles/group_vars/all.yml
-#  roles:
-#    - deploy-webserver
+- name: Deploy Web Server
+  hosts: webservers
+  become: yes
+  vars_files:
+    - roles/group_vars/all.yml
+  roles:
+    - deploy-webserver
