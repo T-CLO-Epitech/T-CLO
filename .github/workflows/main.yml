@@ -17,15 +17,14 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
         working-directory: ./sample-app-master
         run: |
-          docker build -f Dockerfile -t ghcr.io/t-clo-epitech/app-prod:latest ./
+          docker build -f Dockerfile -t vicous/t-clo/app-prod:latest ./
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/t-clo-epitech/app-prod:latest
+          docker push vicous/t-clo/app-prod:latest
