@@ -4,7 +4,7 @@
 
 Pour obtenir le tfstate:
 ```
-curl http://37.59.113.68:8500/v1/kv/terraform/test
+curl http://37.59.113.68:8500/v1/kv/terraform/dev/vicous6
 ```
 
 ## Strategie de Backup
