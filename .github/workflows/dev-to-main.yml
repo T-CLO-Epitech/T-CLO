@@ -1,29 +1,27 @@
-
 name: DEV-to-MAIN
 
 on:
   push:
-    pull_request: [ main ]
+    branches: [ main ]  # corrected pull_request → branches
 
 permissions:
   contents: read
   packages: write # requis pour pousser sur GHCR
+
 jobs:
-  
   docker-build-and-push:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Start Docker Compose services
-      working-directory: ./sample-app-master
-      run: docker compose -f docker-compose-prod.yaml up -d
+      - name: Start Docker Compose services
+        working-directory: ./sample-app-master
+        run: docker compose -f docker-compose-prod.yaml up -d
 
-    - name: Wait for services to be ready
-      working-directory: ./sample-app-master
-      run: |
-        echo "Waiting for app to be ready..."
-        timeout 60s bash -c 'until docker compose exec app curl -f http://localhost:8081; do sleep 2; done'
-
+      - name: Wait for services to be ready
+        working-directory: ./sample-app-master
+        run: |
+          echo "Waiting for app to be ready..."
+          timeout 60s bash -c 'until docker compose exec app curl -f http://localhost:8081; do sleep 2; done'
