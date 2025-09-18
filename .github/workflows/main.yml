@@ -23,8 +23,8 @@ jobs:
       - name: Build Docker image
         working-directory: ./sample-app-master
         run: |
-          docker build -f Dockerfile -t vicous/t-clo/app-prod:latest ./
+          docker build -f Dockerfile -t vicous/t-clo-app-prod:latest ./
 
       - name: Push Docker image
         run: |
-          docker push vicous/t-clo/app-prod:latest
+          docker push vicous/t-clo-app-prod:latest
