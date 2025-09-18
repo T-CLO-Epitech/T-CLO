@@ -1,6 +1,6 @@
 #SPDX-License-Identifier: MIT-0
 ---
-# tasks file for deploy-database
+ #tasks file for deploy-database
 - name: Create directory for app
   file:
     path: /home/{{ ansible_user }}/app
@@ -50,10 +50,11 @@
 - name: Debug .env file creation
   ansible.builtin.debug:
     msg: ".env file created successfully at {{ env_file.stat.path if env_file.stat.exists else 'NOT FOUND' }}"
-#- name: Launch Laravel app
-#  ansible.builtin.command:
-#    cmd: docker compose up -d
-#    chdir: /home/{{ ansible_user }}/app/sample-app-master
+
+- name: Launch Laravel app
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /home/{{ ansible_user }}/app/sample-app-master
 #
 #- name: Curl app using VM public IP
 #  ansible.builtin.command:
