@@ -96,7 +96,7 @@
 
     - name: Launch Laravel app
       ansible.builtin.command:
-        cmd: docker compose up -d
+        cmd: docker compose -f docker-compose-prod.yml up -d 
         chdir: /home/{{ ansible_user }}/app/sample-app-master
 
     - name: Curl app using VM public IP
