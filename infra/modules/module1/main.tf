@@ -175,7 +175,7 @@ resource "azurerm_network_interface_security_group_association" "database_nic_ns
 
 resource "azurerm_network_interface_security_group_association" "webserver2_nic_nsg" {
   network_interface_id      = azurerm_network_interface.nic["webserver2"].id
-  network_security_group_id = azurerm_network_security_group.database_nsg.id
+  network_security_group_id = azurerm_network_security_group.webserver_nsg.id
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
