@@ -26,4 +26,4 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/T-CLO-Epitech/app-prod:latest
+          docker push ghcr.io/t-clo-epitech/app-prod:latest
