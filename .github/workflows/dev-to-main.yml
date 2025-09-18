@@ -9,7 +9,7 @@ permissions:
   packages: write # requis pour pousser sur GHCR
 
 jobs:
-  docker-build-and-push:
+  docker-test-prod:
     runs-on: ubuntu-latest
 
     steps:
