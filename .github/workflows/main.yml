@@ -3,7 +3,9 @@ name: MAIN
 on:
   push:
     branches: [ main ]
-
+permissions:
+  contents: read
+  packages: write # requis pour pousser sur GHCR
 jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
