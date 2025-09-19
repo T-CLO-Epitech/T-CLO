@@ -1,0 +1,32 @@
+name: MAIN
+
+on:
+  push:
+    branches: [ main ]
+    
+permissions:
+  contents: read
+  packages: write # requis pour pousser sur GHCR
+jobs:
+  
+  docker-build-and-push:
+    runs-on: ubuntu-latest
+    # needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        working-directory: ./sample-app-master
+        run: |
+          docker build -f Dockerfile -t vicous/t-clo-app-prod:latest ./
+
+      - name: Push Docker image
+        run: |
+          docker push vicous/t-clo-app-prod:latest
