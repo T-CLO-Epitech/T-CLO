@@ -21,6 +21,7 @@
     - roles/group_vars/all.yml
   roles:
     - deploy-webserver
+    - migration-database
 
 - name: Deploy Web Server2
   hosts: webserver2
