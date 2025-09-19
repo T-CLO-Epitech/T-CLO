@@ -107,7 +107,7 @@
     - name: Copy docker-compose-prod to host
       tags: prod
       ansible.builtin.copy:
-        src: sample-app-master/docker-compose-prod.yaml
+        src: ../sample-app-master/docker-compose-prod.yaml
         dest: /home/{{ ansible_user }}/app/docker-compose-prod.yaml
         mode: '0644'
         owner: "{{ ansible_user }}"
