@@ -204,7 +204,7 @@ jobs:
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
   
   terraform-destroy-caac:
-    needs: terraform-destroy-caac
+    needs: terraform-apply-caac
     runs-on: self-hosted
     if: always()
     steps:
