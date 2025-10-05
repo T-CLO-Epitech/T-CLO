@@ -226,7 +226,8 @@ jobs:
       - name: Destroy VM
         working-directory: infra_caac
         run: | 
-          ls
+          export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
+          export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
           terraform init -backend-config="path=terraform/dev/caac/${{ github.actor }}"
           terraform destroy  -auto-approve 
   
