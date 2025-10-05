@@ -81,16 +81,16 @@ jobs:
 
 
       - name: Create VM
-        working-directory: infra
+        working-directory: infra_caac
         run: | 
+          export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
+          export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_PASSWORD }}
           echo "developer_name=${{ github.actor }}"
           terraform init -backend-config="path=terraform/dev/caac${{ github.actor }}"
           terraform validate
           terraform plan 
           terraform apply -auto-approve
-          touch vm_ip.txt
-          terraform output -raw public_ip > vm_ip.txt
-          terraform output -raw public_ip
+
 
   ansible:
     needs: terraform-apply-iaac
@@ -204,6 +204,7 @@ jobs:
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
   
   terraform-destroy-caac:
+    needs: terraform-destroy-caac
     runs-on: self-hosted
     if: always()
     steps:
