@@ -16,7 +16,7 @@ jobs:
         run: find ./sample-app-master -type f -name "*.php" -exec php -l {} \;
 
 
-  terraform-apply:
+  terraform-apply-iaac:
     needs: Lint
     runs-on: self-hosted
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7   # use a valid version (Terraform 1.13.0 does NOT exist)
+          terraform_version: 1.5.7 
       
       - name: Export Azure Service Principal creds for Terraform
         run: |
@@ -40,7 +40,7 @@ jobs:
         working-directory: infra
         run: | 
           echo "developer_name=${{ github.actor }}"
-          terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/iaac/${{ github.actor }}"
           terraform validate
           terraform plan  -var-file="dev.tfvars"
           terraform apply -auto-approve -var-file="dev.tfvars" 
@@ -60,8 +60,40 @@ jobs:
           name: vm-ip
           path: infra/vm_ip.txt
 
+  terraform-apply-caac:
+    needs: Lint
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7 
+      
+      - name: Export Azure Service Principal creds for Terraform
+        run: |
+          echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+
+
+      - name: Create VM
+        working-directory: infra
+        run: | 
+          echo "developer_name=${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/caac${{ github.actor }}"
+          terraform validate
+          terraform plan 
+          terraform apply -auto-approve
+          touch vm_ip.txt
+          terraform output -raw public_ip > vm_ip.txt
+          terraform output -raw public_ip
+
   ansible:
-    needs: terraform-apply
+    needs: terraform-apply-iaac
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -144,7 +176,7 @@ jobs:
           name: k6-html-report-stress-test
           path: k6-results/report.html
 
-  terraform-destroy:
+  terraform-destroy-iaac:
     needs: stress-test
     runs-on: self-hosted
     if: always()
@@ -168,6 +200,32 @@ jobs:
         working-directory: infra
         run: | 
           ls
-          terraform init -backend-config="path=terraform/dev/${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/iaac/${{ github.actor }}"
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
+  
+  terraform-destroy-caac:
+    runs-on: self-hosted
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7 
+          
+      - name: Export Azure Service Principal creds for Terraform
+        run: |
+          echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+
+      - name: Destroy VM
+        working-directory: infra_caac
+        run: | 
+          ls
+          terraform init -backend-config="path=terraform/dev/caac/${{ github.actor }}"
+          terraform destroy  -auto-approve 
   
