@@ -1,11 +1,8 @@
-variable "environment"        { type = string }
-variable "project_name"       { type = string }
 
 
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
-  name     = "${var.project_name}-${var.environment}-rg"
 }
 
 variable "location" {
@@ -17,7 +14,6 @@ variable "location" {
 variable "app_name" {
   description = "Name of the application"
   type        = string
-  default     = "my-docker-app"
 }
 
 variable "environment" {
