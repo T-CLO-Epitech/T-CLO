@@ -37,10 +37,10 @@ jobs:
 
 
       - name: Create VM
-        working-directory: infra
+        working-directory: infra_iaas
         run: | 
           echo "developer_name=${{ github.actor }}"
-          terraform init -backend-config="path=terraform/dev/iaac/${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/iaas/${{ github.actor }}"
           terraform validate
           terraform plan  -var-file="dev.tfvars"
           terraform apply -auto-approve -var-file="dev.tfvars" 
@@ -81,12 +81,12 @@ jobs:
 
 
       - name: Create VM
-        working-directory: infra_caac
+        working-directory: infra_caas
         run: | 
           export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
           export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
           echo "developer_name=${{ github.actor }}"
-          terraform init -backend-config="path=terraform/dev/caac${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/caas${{ github.actor }}"
           terraform validate
           terraform plan 
           terraform apply -auto-approve
@@ -197,10 +197,10 @@ jobs:
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
       - name: Destroy VM
-        working-directory: infra
+        working-directory: infra_iaas
         run: | 
           ls
-          terraform init -backend-config="path=terraform/dev/iaac/${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/iaas/${{ github.actor }}"
           terraform destroy  -auto-approve -var-file="dev.tfvars" 
   
   terraform-destroy-caac:
@@ -224,10 +224,10 @@ jobs:
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
       - name: Destroy VM
-        working-directory: infra_caac
+        working-directory: infra_caas
         run: | 
           export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
           export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
-          terraform init -backend-config="path=terraform/dev/caac/${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/caas/${{ github.actor }}"
           terraform destroy  -auto-approve 
   

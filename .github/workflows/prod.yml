@@ -25,11 +25,11 @@ jobs:
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
       - name: Create Prod VM
-        working-directory: infra
+        working-directory: infra_iaas
         run: |
           echo "deploying production: TAG=${{ github.event.inputs.tag }}"
           TAG=${{ github.event.inputs.tag }}
-          terraform init -backend-config="path=terraform/prod"
+          terraform init -backend-config="path=terraform/iass/prod"
           terraform validate
           terraform plan -var-file="prod.tfvars"
           terraform apply -auto-approve -var-file="prod.tfvars"

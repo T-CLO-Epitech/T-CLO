@@ -28,8 +28,8 @@ jobs:
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
       - name: Destroy Prod VM
-        working-directory: infra
+        working-directory: infra_iaas
         run: |
-          terraform init -backend-config="path=terraform/prod"
+          terraform init -backend-config="path=terraform/iaas/prod"
           terraform destroy -auto-approve -var-file="prod.tfvars"
 
