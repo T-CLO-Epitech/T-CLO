@@ -69,9 +69,8 @@ jobs:
           echo "Deploying CAAS PROD..."
           terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
           terraform validate
-          terraform plan
-          terraform apply -auto-approve
-          terraform output -raw public_ip > vm_ip.txt
+          terraform plan -var-file="prod.tfvars"
+          terraform apply -auto-approve -var-file="prod.tfvars"
 
       - name: Upload inventory.ini as artifact
         if: needs.determine-type.outputs.deploy_type == 'iaas'
