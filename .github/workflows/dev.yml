@@ -86,7 +86,7 @@ jobs:
           export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
           export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
           echo "developer_name=${{ github.actor }}"
-          terraform init -backend-config="path=terraform/dev/caas${{ github.actor }}"
+          terraform init -backend-config="path=terraform/dev/caas$/{{ github.actor }}"
           terraform validate
           terraform plan 
           terraform apply -auto-approve
