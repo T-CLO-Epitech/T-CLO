@@ -89,7 +89,7 @@ jobs:
           terraform init -backend-config="path=terraform/dev/caas$/{{ github.actor }}"
           terraform validate
           terraform plan 
-          terraform apply -auto-approve
+          terraform apply -auto-approve -var-file="dev.tfvars" 
 
 
   ansible:

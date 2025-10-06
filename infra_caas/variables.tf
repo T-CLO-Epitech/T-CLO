@@ -1,7 +1,11 @@
+variable "environment"        { type = string }
+variable "project_name"       { type = string }
+
+
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
-  default     = "my-app-rg"
+  name     = "${var.project_name}-${var.environment}-rg"
 }
 
 variable "location" {
