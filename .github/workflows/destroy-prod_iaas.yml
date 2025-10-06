@@ -34,13 +34,13 @@ jobs:
           if [[ "$TAG" == *"-iaas" ]]; then
             echo "Destroying IAAS PROD for $TAG..."
             cd infra_iaas
-            terraform init -backend-config="path=terraform/prod/${TAG}.tfstate"
+            terraform init -backend-config="path=terraform/prod/${TAG}"
             terraform destroy -auto-approve -var-file="prod.tfvars"
 
           elif [[ "$TAG" == *"-caas" ]]; then
             echo "Destroying CAAS PROD for $TAG..."
             cd infra_caas
-            terraform init -backend-config="path=terraform/prod/${TAG}.tfstate"
+            terraform init -backend-config="path=terraform/prod/${TAG}"
             terraform destroy -auto-approve
 
           else
