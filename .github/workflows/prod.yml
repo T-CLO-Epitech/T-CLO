@@ -52,7 +52,7 @@ jobs:
         working-directory: infra_iaas
         run: |
           echo "Deploying IAAS PROD..."
-          terraform init -backend-config="path=terraform/prod/iaas"
+          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
           terraform validate
           terraform plan -var-file="prod.tfvars"
           terraform apply -auto-approve -var-file="prod.tfvars"
@@ -67,7 +67,7 @@ jobs:
           TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           echo "Deploying CAAS PROD..."
-          terraform init -backend-config="path=terraform/prod/caas"
+          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
           terraform validate
           terraform plan
           terraform apply -auto-approve

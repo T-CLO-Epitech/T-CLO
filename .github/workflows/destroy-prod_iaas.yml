@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to destroy'
+        description: 'Tag to destroy (e.g. v1.0.0-iaas or v1.0.0-caas)'
         required: true
-        default: 'v1.0.0'
 
 jobs:
   terraform-destroy:
     runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,9 +27,23 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
-      - name: Destroy Prod VM
-        working-directory: infra_iaas
+      - name: Destroy selected PROD environment
         run: |
-          terraform init -backend-config="path=terraform/iaas/prod"
-          terraform destroy -auto-approve -var-file="prod.tfvars"
+          TAG=${{ github.event.inputs.tag }}
 
+          if [[ "$TAG" == *"-iaas" ]]; then
+            echo "Destroying IAAS PROD for $TAG..."
+            cd infra_iaas
+            terraform init -backend-config="key=prod/${TAG}.tfstate"
+            terraform destroy -auto-approve -var-file="prod.tfvars"
+
+          elif [[ "$TAG" == *"-caas" ]]; then
+            echo "Destroying CAAS PROD for $TAG..."
+            cd infra_caas
+            terraform init -backend-config="key=prod/${TAG}.tfstate"
+            terraform destroy -auto-approve
+
+          else
+            echo "Invalid tag: $TAG (must end with -iaas or -caas)"
+            exit 1
+          fi
