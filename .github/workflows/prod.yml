@@ -3,11 +3,33 @@ name: PROD
 on:
   push:
     tags:
-      - 'v*.*.*'   # triggers on tags like v1.0.0, v2.3.1, etc.
-
+      - 'v*.*.*-iaas'
+      - 'v*.*.*-caas'
 jobs:
+
+  determine-type:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_type: ${{ steps.set-type.outputs.deploy_type }}
+    steps:
+      - id: set-type
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == *"-iaas" ]]; then
+            echo "deploy_type=iaas" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF_NAME}" == *"-caas" ]]; then
+            echo "deploy_type=caas" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown deployment type"
+            exit 1
+          fi
+          echo "Detected deployment type: ${GITHUB_REF_NAME}"
+
+  
   terraform-apply:
+    needs: determine-type
     runs-on: self-hosted
+    env:
+      DEPLOY_TYPE: ${{ needs.determine-type.outputs.deploy_type }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,37 +39,56 @@ jobs:
         with:
           terraform_version: 1.5.7
 
-      - name: Export Azure Service Principal creds for Terraform
+      - name: Export Azure credentials
         run: |
           echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
           echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
           echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
-      - name: Create Prod VM
-        working-directory: infra
+      # ───── IAAS ─────
+      - name: Terraform Apply (IAAS)
+        if: needs.determine-type.outputs.deploy_type == 'iaas'
+        working-directory: infra_iaas
         run: |
-          echo "deploying production: TAG=${{ github.event.inputs.tag }}"
-          TAG=${{ github.event.inputs.tag }}
-          terraform init -backend-config="path=terraform/prod"
+          echo "Deploying IAAS PROD..."
+          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
           terraform validate
           terraform plan -var-file="prod.tfvars"
           terraform apply -auto-approve -var-file="prod.tfvars"
           terraform output -raw public_ip > vm_ip.txt
 
+      # ───── CAAS ─────
+      - name: Terraform Apply (CAAS)
+        if: needs.determine-type.outputs.deploy_type == 'caas'
+        working-directory: infra_caas
+        env:
+          TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          echo "Deploying CAAS PROD..."
+          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
+          terraform validate
+          terraform plan
+          terraform apply -auto-approve
+          terraform output -raw public_ip > vm_ip.txt
+
       - name: Upload inventory.ini as artifact
+        if: needs.determine-type.outputs.deploy_type == 'iaas'
         uses: actions/upload-artifact@v4
         with:
           name: inventory-file-prod
-          path: infra/inventory_prod.ini
+          path: infra_iaas/inventory_prod.ini
 
       - name: Upload VM IP
+        if: needs.determine-type.outputs.deploy_type == 'iaas'
         uses: actions/upload-artifact@v4
         with:
           name: prod-vm-ip
-          path: infra/vm_ip.txt
+          path: infra_iaas/vm_ip.txt
 
   ansible:
+    if: needs.determine-type.outputs.deploy_type == 'iaas'
     needs: terraform-apply
     runs-on: self-hosted
     steps:
