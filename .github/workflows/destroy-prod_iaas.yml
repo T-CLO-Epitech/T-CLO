@@ -41,7 +41,7 @@ jobs:
             echo "Destroying CAAS PROD for $TAG..."
             cd infra_caas
             terraform init -backend-config="path=terraform/prod/${TAG}"
-            terraform destroy -auto-approve
+            terraform destroy -auto-approve -var-file="prod.tfvars"
 
           else
             echo "Invalid tag: $TAG (must end with -iaas or -caas)"
