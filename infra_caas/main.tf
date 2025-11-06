@@ -13,6 +13,7 @@ resource "random_string" "acr_suffix" {
   special = false
 }
 
+
 resource "azurerm_container_registry" "main" {
   name                = substr(replace("${var.app_name}${random_string.acr_suffix.result}", "-", ""), 0, 50)
   resource_group_name = azurerm_resource_group.main.name
