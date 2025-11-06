@@ -72,7 +72,7 @@
   tags: prod
   ansible.builtin.command:
     cmd: docker compose -f docker-compose-prod.yaml up -d
-    chdir: /home/{{ ansible_user }}/app
+    chdir: /home/{{ ansible_user }}/app/sample-app-master
 
 #- name: Curl app using VM public IP
 #  ansible.builtin.command:

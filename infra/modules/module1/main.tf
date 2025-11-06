@@ -11,15 +11,6 @@ locals {
         Tier = "frontend"
       }
     }
-    database = {
-      name = "database"
-      size = var.vm_size
-      ports = ["22", "3306"]
-      tags = {
-        Role = "database"
-        Tier = "backend"
-      }
-    }
     webserver2 = {
       name = "webserver2"
       size = var.vm_size
@@ -27,6 +18,17 @@ locals {
       tags = {
         Role = "webserver2"
         Tier = "frontend"
+      }
+    }
+  }
+  Database = {
+    database = {
+      name = "database"
+      size = var.vm_size
+      ports = ["22", "3306"]
+      tags = {
+        Role = "database"
+        Tier = "backend"
       }
     }
   }
@@ -45,6 +47,14 @@ resource "azurerm_public_ip" "pip" {
     Env     = var.environment
   }, each.value.tags)
 }
+resource "azurerm_public_ip" "pip_database" {
+  for_each = local.Database
+  name                = "${local.prefix}-${each.value.name}-pip"
+  location            = var.DB_location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
 
 resource "azurerm_network_interface" "nic" {
   for_each            = local.vms
@@ -57,6 +67,25 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pip[each.key].id
+  }
+
+  tags = merge({
+    Project = var.project_name
+    Env     = var.environment
+  }, each.value.tags)
+}
+
+resource "azurerm_network_interface" "nic_database" {
+  for_each            = local.Database
+  name                = "${local.prefix}-${each.value.name}-nic"
+  location            = var.DB_location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "ipconfig1"
+    subnet_id                     = var.db_subnet_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_database[each.key].id
   }
 
   tags = merge({
@@ -129,7 +158,7 @@ resource "azurerm_network_security_group" "webserver_nsg" {
 
 resource "azurerm_network_security_group" "database_nsg" {
   name                = "${local.prefix}-database-nsg"
-  location            = var.location
+  location            = var.DB_location
   resource_group_name = var.resource_group_name
 
   security_rule {
@@ -169,7 +198,7 @@ resource "azurerm_network_interface_security_group_association" "webserver_nic_n
 }
 
 resource "azurerm_network_interface_security_group_association" "database_nic_nsg" {
-  network_interface_id      = azurerm_network_interface.nic["database"].id
+  network_interface_id      = azurerm_network_interface.nic_database["database"].id
   network_security_group_id = azurerm_network_security_group.database_nsg.id
 }
 
@@ -213,34 +242,69 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }, each.value.tags)
 }
 
-output "vm_public_ips" {
-  description = "Adresses IP publiques par rôle"
-  value = {
-    for role, vm in azurerm_public_ip.pip :
-    role => vm.ip_address
+resource "azurerm_linux_virtual_machine" "vm_database" {
+  for_each            = local.Database
+  name                = "${local.prefix}-${each.value.name}"
+  resource_group_name = var.resource_group_name
+  location            = var.DB_location
+  size                = each.value.size
+  admin_username      = var.admin_username
+  network_interface_ids = [azurerm_network_interface.nic_database[each.key].id]
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = var.ssh_public_key
   }
+
+  source_image_reference {
+    publisher = "Debian"
+    offer     = "debian-12"
+    sku       = "12"
+    version   = "latest"
+  }
+
+  os_disk {
+    name                 = "${local.prefix}-${each.value.name}-osdisk"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  tags = merge({
+    Project = var.project_name
+    Env     = var.environment
+  }, each.value.tags)
+}
+
+
+output "vm_public_ips" {
+  description = "IP publiques par rôle"
+  value = merge(
+    { for role, pip in azurerm_public_ip.pip : role => pip.ip_address },
+    { for role, pip in azurerm_public_ip.pip_database : role => pip.ip_address }
+  )
 }
 
 output "vm_private_ips" {
-  description = "Adresses IP privées par rôle"
-  value = {
-    for role, nic in azurerm_network_interface.nic :
-    role => nic.private_ip_address
-  }
+  description = "IP privées par rôle"
+  value = merge(
+    { for role, nic in azurerm_network_interface.nic : role => nic.private_ip_address },
+    { for role, nic in azurerm_network_interface.nic_database : role => nic.private_ip_address }
+  )
 }
 
 output "vm_names" {
   description = "Noms des VMs par rôle"
-  value = {
-    for role, vm in azurerm_linux_virtual_machine.vm :
-    role => vm.name
-  }
+  value = merge(
+    { for role, vm in azurerm_linux_virtual_machine.vm : role => vm.name },
+    { for role, vm in azurerm_linux_virtual_machine.vm_database : role => vm.name }
+  )
 }
 
 output "vm_ids" {
   description = "IDs des VMs par rôle"
-  value = {
-    for role, vm in azurerm_linux_virtual_machine.vm :
-    role => vm.id
-  }
+  value = merge(
+    { for role, vm in azurerm_linux_virtual_machine.vm : role => vm.id },
+    { for role, vm in azurerm_linux_virtual_machine.vm_database : role => vm.id }
+  )
 }

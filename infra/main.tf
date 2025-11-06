@@ -4,10 +4,12 @@ module "vm" {
   environment      = var.environment
   location         = var.location
   vm_size          = var.vm_size
+  DB_location      = var.DB_location
   admin_username   = var.admin_username
   ssh_public_key   = var.ssh_public_key
   allow_ssh_from_cidr = var.allow_ssh_from_cidr
 
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.subnet.id
+  db_subnet_id        = azurerm_subnet.subnet_db.id
 }
