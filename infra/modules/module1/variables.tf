@@ -10,3 +10,7 @@ variable "allow_ssh_from_cidr" { type = string }
 variable "resource_group_name" { type = string }
 variable "subnet_id"           { type = string }
 variable "db_subnet_id"        { type = string }
+variable "create_lb_outbound_rule" {
+  type    = bool
+  default = false
+}

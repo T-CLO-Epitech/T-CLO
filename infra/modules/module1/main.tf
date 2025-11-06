@@ -32,6 +32,116 @@ locals {
       }
     }
   }
+  lb_vms = {
+    for k, v in local.vms : k => v
+    if contains(["webserver", "webserver2"], k)
+  }
+}
+
+
+resource "azurerm_public_ip" "lb_pip" {
+  name                = "${local.prefix}-lb-pip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
+  tags = {
+    Project = var.project_name
+    Env     = var.environment
+    Role    = "loadbalancer"
+  }
+}
+resource "azurerm_lb" "main" {
+  name                = "${local.prefix}-lb"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.lb_pip.id
+  }
+
+  tags = {
+    Project = var.project_name
+    Env     = var.environment
+    Role    = "loadbalancer"
+  }
+}
+
+# Health Probe HTTP
+resource "azurerm_lb_probe" "http" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "http-probe"
+  protocol        = "Http"
+  port            = 80
+  request_path    = "/"
+}
+
+# Health Probe HTTPS
+resource "azurerm_lb_probe" "https" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "https-probe"
+  protocol        = "Tcp"
+  port            = 443
+}
+
+# Load Balancer Rule - HTTP
+resource "azurerm_lb_rule" "http" {
+  loadbalancer_id                = azurerm_lb.main.id
+  name                           = "http-rule"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
+  probe_id                       = azurerm_lb_probe.http.id
+  disable_outbound_snat          = true
+}
+
+# Load Balancer Rule - HTTPS
+resource "azurerm_lb_rule" "https" {
+  loadbalancer_id                = azurerm_lb.main.id
+  name                           = "https-rule"
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
+  probe_id                       = azurerm_lb_probe.https.id
+  disable_outbound_snat          = true
+}
+
+# Load Balancer Rule - Custom App Port
+resource "azurerm_lb_rule" "app" {
+  loadbalancer_id                = azurerm_lb.main.id
+  name                           = "app-rule"
+  protocol                       = "Tcp"
+  frontend_port                  = 8081
+  backend_port                   = 8081
+  frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
+  disable_outbound_snat          = true
+}
+
+# Outbound Rule pour la connectivité sortante
+resource "azurerm_lb_outbound_rule" "main" {
+  count                   = var.create_lb_outbound_rule ? 1 : 0
+
+  name                    = "outbound-rule"
+  loadbalancer_id         = azurerm_lb.main.id
+  protocol                = "All"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.main.id
+
+  frontend_ip_configuration {
+    name = "PublicIPAddress"
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "main" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "${local.prefix}-backend-pool"
 }
 
 resource "azurerm_public_ip" "pip" {
@@ -207,6 +317,14 @@ resource "azurerm_network_interface_security_group_association" "webserver2_nic_
   network_security_group_id = azurerm_network_security_group.webserver_nsg.id
 }
 
+resource "azurerm_network_interface_backend_address_pool_association" "lb_assoc" {
+  for_each = local.lb_vms
+
+  network_interface_id    = azurerm_network_interface.nic[each.key].id
+  ip_configuration_name   = "ipconfig1"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.main.id
+}
+
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each            = local.vms
   name                = "${local.prefix}-${each.value.name}"
@@ -307,4 +425,19 @@ output "vm_ids" {
     { for role, vm in azurerm_linux_virtual_machine.vm : role => vm.id },
     { for role, vm in azurerm_linux_virtual_machine.vm_database : role => vm.id }
   )
+}
+
+output "lb_public_ip" {
+  description = "Adresse IP publique du Load Balancer"
+  value       = azurerm_public_ip.lb_pip.ip_address
+}
+
+output "lb_id" {
+  description = "ID du Load Balancer"
+  value       = azurerm_lb.main.id
+}
+
+output "lb_frontend_ip_config" {
+  description = "Configuration IP frontend du Load Balancer"
+  value       = azurerm_lb.main.frontend_ip_configuration
 }
