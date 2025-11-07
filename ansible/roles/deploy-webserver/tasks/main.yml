@@ -8,6 +8,18 @@
     mode: '0755'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+- name: Debug list /tmp and parent directories
+  ansible.builtin.command:
+    cmd: ls -la /tmp && ls -la ..
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: ls_output
+
+- name: Show ls -la debug output
+  ansible.builtin.debug:
+    var: ls_output.stdout_lines
+
 
 - name: Archive app locally
   tags: dev
