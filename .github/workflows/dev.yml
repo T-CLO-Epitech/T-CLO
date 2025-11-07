@@ -52,6 +52,10 @@ jobs:
           name: inventory-file-dev
           path: infra_iaas/inventory_dev.ini
 
+      - name: check inventory.ini
+        run: |
+          cat infra_iaas/inventory_dev.ini
+
       - name: Upload VM IP
         uses: actions/upload-artifact@v4
         with:
