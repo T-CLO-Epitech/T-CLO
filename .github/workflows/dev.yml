@@ -43,7 +43,7 @@ jobs:
           terraform init -backend-config="path=terraform/dev/iaas/${{ github.actor }}"
           terraform validate
           terraform plan  -var-file="dev.tfvars"
-          terraform apply -auto-approve -var-file="dev.tfvars" -var="actor=${{ github.actor }}" 
+          terraform apply -auto-approve -var-file="dev.tfvars"
           touch vm_ip.txt
           terraform output -raw public_ip > vm_ip.txt
           terraform output -raw public_ip
