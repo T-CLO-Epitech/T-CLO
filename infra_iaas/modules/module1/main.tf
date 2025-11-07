@@ -31,6 +31,15 @@ locals {
         Tier = "backend"
       }
     }
+    monitoring = {
+      name = "monitoring"
+      size = var.vm_size
+      ports = ["22", "9100"]
+      tags = {
+        Role = "monitoring"
+        Tier = "backend"
+      }
+    }
   }
   lb_vms = {
     for k, v in local.vms : k => v
