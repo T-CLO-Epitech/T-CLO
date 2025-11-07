@@ -1,6 +1,6 @@
 [webserver1]
-${webserver_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=webserver ansible_ssh_common_args='-o StrictHostKeyChecking=no
+${webserver_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=webserver ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 [webserver2]
-${webserver2_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=replica ansible_ssh_common_args='-o StrictHostKeyChecking=no
+${webserver2_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=replica ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 [databases]
-${database_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=database ansible_ssh_common_args='-o StrictHostKeyChecking=no
+${database_ip} ansible_user=${admin_username} ansible_ssh_private_key_file=~/.ssh/id_rsa server_role=database ansible_ssh_common_args='-o StrictHostKeyChecking=no'
