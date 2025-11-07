@@ -15,7 +15,6 @@ jobs:
       - name: lint App
         run: find ./sample-app-master -type f -name "*.php" -exec php -l {} \;
 
-
   terraform-apply-iaac:
     needs: Lint
     runs-on: self-hosted
