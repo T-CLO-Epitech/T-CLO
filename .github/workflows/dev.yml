@@ -55,7 +55,7 @@ jobs:
       - name: check inventory.ini
         run: |
           cat infra_iaas/inventory_dev.ini
-          pwd
+          cd 
           ls .shh/
           cat .ssh/id_rsa
 
