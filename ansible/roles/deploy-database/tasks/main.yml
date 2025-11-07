@@ -1,0 +1,23 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for deploy-database
+
+- name: Create directory for app
+  file:
+    path: /home/{{ ansible_user }}/app
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Generate MySQL Docker Compose file
+  template:
+    src: mysql-docker-compose.j2
+    dest: /home/{{ ansible_user }}/app/docker-compose.yml
+
+- name: Launch MySQL container
+  shell: sudo docker compose up -d
+  args:
+    chdir: /home/{{ ansible_user }}/app
+  become_user: "{{ ansible_user }}"
+

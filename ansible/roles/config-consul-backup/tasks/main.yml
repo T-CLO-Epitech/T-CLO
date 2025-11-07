@@ -1,0 +1,29 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for config-consul-backup
+- name: create backup directory
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/app/backup
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy backup-script
+  ansible.builtin.copy:
+    src: ../scripts/backup-consul.sh
+    dest: /home/{{ ansible_user }}/app/backup-script.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: create crontab for backup-script
+  ansible.builtin.cron:
+    name: "Backup Consul Data"
+    minute: "0"
+    hour: "*"
+    job: "/bin/bash /home/{{ ansible_user }}/app/backup-script.sh  >> /home/{{ ansible_user }}/app/backup/cron.log 2>&1"
+    user: "{{ ansible_user }}"
+    state: present
+
+  when: curl_output.stdout != "200"

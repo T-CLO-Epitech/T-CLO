@@ -1,0 +1,23 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for migration_database
+
+- name: Wait until MySQL is reachable with PDO
+  ansible.builtin.command:
+    cmd: >
+      docker exec app php -r 'new PDO(
+      "mysql:host={{ database_address }};
+      port={{ db_port }};
+      dbname={{ db_name }}",
+      "{{ db_username }}",
+      "{{ db_password }}"
+      );'
+  register: mysql_check
+  retries: 10
+  delay: 2
+  until: mysql_check.rc == 0
+  failed_when: false
+
+- name: Run database migrations
+  ansible.builtin.command:
+    cmd: docker exec app php artisan migrate --force

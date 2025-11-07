@@ -24,7 +24,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Activez le module Apache Rewrite
-RUN a2enmod rewrite
-
+RUN a2enmod rewrite \
+ && printf 'ServerName localhost\n' > /etc/apache2/conf-available/servername.conf \
+ && a2enconf servername
 # Exposez le port 80
 EXPOSE 80
