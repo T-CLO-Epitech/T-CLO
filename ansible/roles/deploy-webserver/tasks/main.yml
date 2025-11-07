@@ -1,0 +1,103 @@
+#SPDX-License-Identifier: MIT-0
+---
+ #tasks file for deploy-database
+- name: Create directory for app
+  file:
+    path: /home/{{ ansible_user }}/app
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Debug list /tmp and parent directories
+  ansible.builtin.command:
+    cmd: rm -rf /tmp/sample-app.tar.gz
+  delegate_to: localhost
+  become: true
+
+- name: Show ls -la debug output
+  ansible.builtin.debug:
+    var: ls_output.stdout_lines
+
+- name: Archive app locally
+  tags: dev
+  ansible.builtin.command:
+    cmd: tar -czf /tmp/sample-app.tar.gz -C .. sample-app-master
+  delegate_to: localhost
+  run_once: true
+  become: true
+
+- name: Copy app archive to remote
+  tags: dev
+  ansible.builtin.copy:
+    src: /tmp/sample-app.tar.gz
+    dest: /home/{{ ansible_user }}/app/sample-app.tar.gz
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Extract app archive on remote
+  tags: dev
+  ansible.builtin.unarchive:
+    src: /home/{{ ansible_user }}/app/sample-app.tar.gz
+    dest: /home/{{ ansible_user }}/app/
+    remote_src: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Generate .env file from template
+  ansible.builtin.template:
+    src: env.prod.j2
+    dest: "/home/{{ ansible_user }}/app/sample-app-master/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Verify .env file was created
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_user }}/app/sample-app-master/.env"
+  register: env_file
+
+- name: Debug .env file creation
+  ansible.builtin.debug:
+    msg: ".env file created successfully at {{ env_file.stat.path if env_file.stat.exists else 'NOT FOUND' }}"
+
+- name: Launch Laravel app
+  tags: dev
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: /home/{{ ansible_user }}/app/sample-app-master
+
+- name: Copy docker-compose-prod to host
+  tags: prod
+  ansible.builtin.copy:
+    src: ../sample-app-master/docker-compose-prod.yaml
+    dest: /home/{{ ansible_user }}/app/docker-compose-prod.yaml
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Launch Laravel app
+  tags: prod
+  ansible.builtin.command:
+    cmd: docker compose -f docker-compose-prod.yaml up -d
+    chdir: /home/{{ ansible_user }}/app/sample-app-master
+
+#- name: Curl app using VM public IP
+#  ansible.builtin.command:
+#    cmd: curl -s -o /dev/null -w "%{http_code}" http://{{ ansible_host }}:8081
+#  register: curl_output
+#  retries: 5
+#  delay: 10
+#  until: curl_output.stdout == "200"
+#
+#- name: Debug curl response
+#  ansible.builtin.debug:
+#    msg: "HTTP Response: {{ curl_output.stdout }}"
+#
+#- name: Fail if app did not return 200
+#  ansible.builtin.fail:
+#    msg: "App is not healthy! Expected 200, got {{ curl_output.stdout }}"
+#  when: curl_output.stdout != "200"
+
