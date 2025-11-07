@@ -44,8 +44,11 @@ jobs:
           terraform plan  -var-file="dev.tfvars"
           terraform apply -auto-approve -var-file="dev.tfvars"
           touch vm_ip.txt
+          cat vm_ip.txt
           terraform output -raw public_ip > vm_ip.txt
+          cat vm_ip.txt
           terraform output -raw public_ip
+          cat vm_ip.txt
 
       - name: Upload inventory.ini as artifact
         uses: actions/upload-artifact@v4
