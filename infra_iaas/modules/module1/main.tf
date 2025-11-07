@@ -70,7 +70,6 @@ resource "azurerm_lb" "main" {
   }
 }
 
-# Health Probe HTTP
 resource "azurerm_lb_probe" "http" {
   loadbalancer_id = azurerm_lb.main.id
   name            = "http-probe"
@@ -79,7 +78,6 @@ resource "azurerm_lb_probe" "http" {
   request_path    = "/"
 }
 
-# Health Probe HTTPS
 resource "azurerm_lb_probe" "https" {
   loadbalancer_id = azurerm_lb.main.id
   name            = "https-probe"
@@ -87,7 +85,6 @@ resource "azurerm_lb_probe" "https" {
   port            = 443
 }
 
-# Load Balancer Rule - HTTP
 resource "azurerm_lb_rule" "http" {
   loadbalancer_id                = azurerm_lb.main.id
   name                           = "http-rule"
@@ -100,7 +97,6 @@ resource "azurerm_lb_rule" "http" {
   disable_outbound_snat          = true
 }
 
-# Load Balancer Rule - HTTPS
 resource "azurerm_lb_rule" "https" {
   loadbalancer_id                = azurerm_lb.main.id
   name                           = "https-rule"
@@ -113,7 +109,6 @@ resource "azurerm_lb_rule" "https" {
   disable_outbound_snat          = true
 }
 
-# Load Balancer Rule - Custom App Port
 resource "azurerm_lb_rule" "app" {
   loadbalancer_id                = azurerm_lb.main.id
   name                           = "app-rule"
@@ -125,7 +120,6 @@ resource "azurerm_lb_rule" "app" {
   disable_outbound_snat          = true
 }
 
-# Outbound Rule pour la connectivité sortante
 resource "azurerm_lb_outbound_rule" "main" {
   count                   = var.create_lb_outbound_rule ? 1 : 0
 

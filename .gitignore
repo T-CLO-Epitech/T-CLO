@@ -15,3 +15,4 @@ infra_caas/terraform.tfstate.backup
 infra_caas/inventory.ini
 infra_caas/terraform.tfvars
 infra_caas/plan.out
+infra/.terraform
