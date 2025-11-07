@@ -55,6 +55,9 @@ jobs:
       - name: check inventory.ini
         run: |
           cat infra_iaas/inventory_dev.ini
+          pwd
+          ls .shh/
+          cat .ssh/id_rsa
 
       - name: Upload VM IP
         uses: actions/upload-artifact@v4
