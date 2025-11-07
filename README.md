@@ -9,3 +9,6 @@ Pour consulter l'architecture, veuillez vous référer à la documentation suiva
 
 Pour savoir comment déployer l'application, veuillez consulter :
 - [Documentation d'exploitation](documentation/exploitation.md)
+
+Lien vers les études de couts des differents mode de deploiement:
+- [Etude des Couts](documentation/estimation-de-cout/)
