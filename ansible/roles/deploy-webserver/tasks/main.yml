@@ -64,9 +64,9 @@
     msg: ".env file created successfully at {{ env_file.stat.path if env_file.stat.exists else 'NOT FOUND' }}"
 
 - name: Launch Laravel app
-  tags: dev
+  tags: prod
   ansible.builtin.command:
-    cmd: docker compose up -d
+    cmd: docker compose -f docker-compose-prod.yaml up -d
     chdir: /home/{{ ansible_user }}/app/sample-app-master
 
 - name: Copy docker-compose-prod to host
@@ -83,21 +83,4 @@
   ansible.builtin.command:
     cmd: docker compose -f docker-compose-prod.yaml up -d
     chdir: /home/{{ ansible_user }}/app/sample-app-master
-
-#- name: Curl app using VM public IP
-#  ansible.builtin.command:
-#    cmd: curl -s -o /dev/null -w "%{http_code}" http://{{ ansible_host }}:8081
-#  register: curl_output
-#  retries: 5
-#  delay: 10
-#  until: curl_output.stdout == "200"
-#
-#- name: Debug curl response
-#  ansible.builtin.debug:
-#    msg: "HTTP Response: {{ curl_output.stdout }}"
-#
-#- name: Fail if app did not return 200
-#  ansible.builtin.fail:
-#    msg: "App is not healthy! Expected 200, got {{ curl_output.stdout }}"
-#  when: curl_output.stdout != "200"
 
