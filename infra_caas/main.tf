@@ -49,7 +49,7 @@ resource "azurerm_container_group" "multi_container" {
     }
 
     environment_variables = {
-      "DATABASE_HOST" = "localhost"
+      "DATABASE_HOST" = "db"
       "DATABASE_PORT" = "5432"
       "DATABASE_NAME" = "myapp"
       "DATABASE_USER" = "admin"
