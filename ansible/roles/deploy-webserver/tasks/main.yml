@@ -1,6 +1,5 @@
 #SPDX-License-Identifier: MIT-0
 ---
- #tasks file for deploy-database
 - name: Create directory for app
   file:
     path: /home/{{ ansible_user }}/app
@@ -20,7 +19,6 @@
     var: ls_output.stdout_lines
 
 - name: Archive app locally
-  tags: dev
   ansible.builtin.command:
     cmd: tar -czf /tmp/sample-app.tar.gz -C .. sample-app-master
   delegate_to: localhost
@@ -28,7 +26,6 @@
   become: true
 
 - name: Copy app archive to remote
-  tags: dev
   ansible.builtin.copy:
     src: /tmp/sample-app.tar.gz
     dest: /home/{{ ansible_user }}/app/sample-app.tar.gz
@@ -37,7 +34,6 @@
     group: "{{ ansible_user }}"
 
 - name: Extract app archive on remote
-  tags: dev
   ansible.builtin.unarchive:
     src: /home/{{ ansible_user }}/app/sample-app.tar.gz
     dest: /home/{{ ansible_user }}/app/
@@ -64,13 +60,11 @@
     msg: ".env file created successfully at {{ env_file.stat.path if env_file.stat.exists else 'NOT FOUND' }}"
 
 - name: Launch Laravel app
-  tags: dev
   ansible.builtin.command:
-    cmd: docker compose up -d
+    cmd: docker compose -f docker-compose-prod.yaml up -d
     chdir: /home/{{ ansible_user }}/app/sample-app-master
 
 - name: Copy docker-compose-prod to host
-  tags: prod
   ansible.builtin.copy:
     src: ../sample-app-master/docker-compose-prod.yaml
     dest: /home/{{ ansible_user }}/app/docker-compose-prod.yaml
@@ -79,25 +73,7 @@
     group: "{{ ansible_user }}"
 
 - name: Launch Laravel app
-  tags: prod
   ansible.builtin.command:
     cmd: docker compose -f docker-compose-prod.yaml up -d
     chdir: /home/{{ ansible_user }}/app/sample-app-master
-
-#- name: Curl app using VM public IP
-#  ansible.builtin.command:
-#    cmd: curl -s -o /dev/null -w "%{http_code}" http://{{ ansible_host }}:8081
-#  register: curl_output
-#  retries: 5
-#  delay: 10
-#  until: curl_output.stdout == "200"
-#
-#- name: Debug curl response
-#  ansible.builtin.debug:
-#    msg: "HTTP Response: {{ curl_output.stdout }}"
-#
-#- name: Fail if app did not return 200
-#  ansible.builtin.fail:
-#    msg: "App is not healthy! Expected 200, got {{ curl_output.stdout }}"
-#  when: curl_output.stdout != "200"
 
