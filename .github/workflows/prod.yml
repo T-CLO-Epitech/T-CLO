@@ -56,7 +56,7 @@ jobs:
           terraform validate
           terraform plan -var-file="prod.tfvars"
           terraform apply -auto-approve -var-file="prod.tfvars"
-          terraform output -raw public_ip > vm_ip.txt
+          terraform output -json public_ip > vm_ip.txt
 
       # ───── CAAS ─────
       - name: Terraform Apply (CAAS)
