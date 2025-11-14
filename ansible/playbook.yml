@@ -1,164 +1,32 @@
 # Playbook to initialize a server with necessary packages and configurations
-
-
 ---
-
-- name: Install Docker and launch app
+- name: Install docker service
+  hosts: all
   become: yes
-  hosts: azure_vms  # Runs once locally to load vars
-  tasks:
+  roles:
+    - install-docker
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
+- name: Deploy Database Server
+  hosts: databases
+  become: yes
+  vars_files:
+    - roles/group_vars/all.yml
+  roles:
+    - deploy-database
 
-    - name: Install dependencies for Docker
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-          - cron
-          - zip
-          - rsync
-        state: present
+- name: Deploy Web Server
+  hosts: webserver1
+  become: yes
+  vars_files:
+    - roles/group_vars/all.yml
+  roles:
+    - deploy-webserver
+    - migration-database
 
-    - name: Add Docker GPG key
-      ansible.builtin.apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add Docker repository
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
-        state: present
-
-    - name: Install Docker packages
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: latest
-
-    - name: Start and enable Docker service
-      systemd:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Add user to Docker group
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
-
-    - name: Test Docker Install
-      command: docker --version
-      register: docker_version
-
-    - name: Show Docker Version
-      debug:
-        var: docker_version.stdout
-
-    - name: Create directory for app
-      file:
-        path: /home/{{ ansible_user }}/app
-        state: directory
-        mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-
-    - name: Archive app locally
-      tags: dev
-      ansible.builtin.command:
-        cmd: tar -czf /tmp/sample-app.tar.gz -C .. sample-app-master
-      delegate_to: localhost
-      run_once: true
-
-    - name: Copy app archive to remote
-      tags: dev
-      ansible.builtin.copy:
-        src: /tmp/sample-app.tar.gz
-        dest: /home/{{ ansible_user }}/app/sample-app.tar.gz
-        mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-
-    - name: Extract app archive on remote
-      tags: dev
-      ansible.builtin.unarchive:
-        src: /home/{{ ansible_user }}/app/sample-app.tar.gz
-        dest: /home/{{ ansible_user }}/app/
-        remote_src: yes
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0755'
-
-
-
-    - name: Launch Laravel app
-      tags: dev
-      ansible.builtin.command:
-        cmd: docker compose up -d 
-        chdir: /home/{{ ansible_user }}/app/sample-app-master
-
-    - name: Copy docker-compose-prod to host
-      tags: prod
-      ansible.builtin.copy:
-        src: ../sample-app-master/docker-compose-prod.yaml
-        dest: /home/{{ ansible_user }}/app/docker-compose-prod.yaml
-        mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-
-    - name: Launch Laravel app
-      tags: prod
-      ansible.builtin.command:
-        cmd: docker compose -f docker-compose-prod.yaml up -d 
-        chdir: /home/{{ ansible_user }}/app
-
-    - name: Curl app using VM public IP
-      ansible.builtin.command:
-        cmd: curl -s -o /dev/null -w "%{http_code}" http://{{ ansible_host }}:8081
-      register: curl_output
-      retries: 5
-      delay: 10
-      until: curl_output.stdout == "200"
-
-    - name: Debug curl response
-      ansible.builtin.debug:
-        msg: "HTTP Response: {{ curl_output.stdout }}"
-
-    - name: Fail if app did not return 200
-      ansible.builtin.fail:
-        msg: "App is not healthy! Expected 200, got {{ curl_output.stdout }}"
-      when: curl_output.stdout != "200"
-
-    - name: create backup directory
-      ansible.builtin.file:
-        path: /home/{{ ansible_user }}/app/backup
-        state: directory
-        mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-
-    - name: Copy backup-script
-      ansible.builtin.copy:
-        src: ../scripts/backup-consul.sh
-        dest: /home/{{ ansible_user }}/app/backup-script.sh
-        mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-
-    - name: create crontab for backup-script
-      ansible.builtin.cron:
-        name: "Backup Consul Data"
-        minute: "0"
-        hour: "*"
-        job: "/bin/bash /home/{{ ansible_user }}/app/backup-script.sh  >> /home/{{ ansible_user }}/app/backup/cron.log 2>&1"
-        user: "{{ ansible_user }}"
-        state: present
-
-      when: curl_output.stdout != "200"
+- name: Deploy Web Server2
+  hosts: webserver2
+  become: yes
+  vars_files:
+    - roles/group_vars/all.yml
+  roles:
+    - deploy-webserver
