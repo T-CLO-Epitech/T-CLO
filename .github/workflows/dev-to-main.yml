@@ -24,5 +24,5 @@ jobs:
         working-directory: ./sample-app-master
         run: |
           echo "Waiting for app to be ready..."
-          timeout 60s bash -c 'until curl -f http://localhost:8081; do sleep 2; done'
+          timeout 180s bash -c 'until curl -f http://localhost:8081; do sleep 2; done'
 
