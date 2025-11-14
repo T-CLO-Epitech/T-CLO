@@ -6,14 +6,14 @@ on:
     branches: [ dev ]
 
 jobs:
-  # Lint:
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  Lint:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: lint App
-  #       run: find ./sample-app-master -type f -name "*.php" -exec php -l {} \;
+      - name: lint App
+        run: find ./sample-app-master -type f -name "*.php" -exec php -l {} \;
 
   # terraform-apply-iaac:
   #   needs: Lint
