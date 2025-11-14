@@ -24,7 +24,6 @@ jobs:
           fi
           echo "Detected deployment type: ${GITHUB_REF_NAME}"
 
-  
   terraform-apply:
     needs: determine-type
     runs-on: self-hosted
