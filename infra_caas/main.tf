@@ -54,7 +54,8 @@ resource "azurerm_container_group" "multi_container" {
       "DATABASE_NAME" = "myapp"
       "DATABASE_USER" = "admin"
       "DATABASE_PASSWORD" = var.db_password
-      "DB_CONNECTION": mysql
+      "DB_CONNECTION" = "mysql"
+      
     }
   }
 
