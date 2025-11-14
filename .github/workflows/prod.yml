@@ -118,7 +118,6 @@ jobs:
           fi
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo "Using VM IP: $VM_IP"
-      
 
       - name: Setup SSH
         env:
