@@ -28,7 +28,9 @@ resource "azurerm_container_group" "multi_container" {
   ip_address_type     = "Public"
   dns_name_label      = "${var.dns_name_label}-multi"
   os_type             = "Linux"
-  
+  depends_on = [
+    azurerm_container_registry.main
+  ]
   image_registry_credential {
     server   = "index.docker.io"
     username = var.dockerhub_username
