@@ -58,19 +58,19 @@ jobs:
           terraform apply -auto-approve -var-file="prod.tfvars"
           terraform output -json public_ip > vm_ip.txt
 
-      # ───── CAAS ─────
-      - name: Terraform Apply (CAAS)
-        if: needs.determine-type.outputs.deploy_type == 'caas'
-        working-directory: infra_caas
-        env:
-          TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          echo "Deploying CAAS PROD..."
-          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
-          terraform validate
-          terraform plan -var-file="prod.tfvars"
-          terraform apply -auto-approve -var-file="prod.tfvars"
+#      # ───── CAAS ─────
+#      - name: Terraform Apply (CAAS)
+#        if: needs.determine-type.outputs.deploy_type == 'caas'
+#        working-directory: infra_caas
+#        env:
+#          TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+#        run: |
+#          echo "Deploying CAAS PROD..."
+#          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
+#          terraform validate
+#          terraform plan -var-file="prod.tfvars"
+#          terraform apply -auto-approve -var-file="prod.tfvars"
 
       - name: Upload inventory.ini as artifact
         if: needs.determine-type.outputs.deploy_type == 'iaas'
@@ -88,18 +88,19 @@ jobs:
 
   ansible:
     if: needs.determine-type.outputs.deploy_type == 'iaas'
-    needs: terraform-apply
+    needs:
+      - determine-type
+      - terraform-apply
     runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Download inventory artifact
         uses: actions/download-artifact@v4
         with:
           name: inventory-file-prod
-          path: ansible   # where to place the downloaded file
-
+          path: ansible
 
       - name: Download VM IP artifact
         uses: actions/download-artifact@v4
@@ -110,8 +111,9 @@ jobs:
       - name: Read VM IP
         id: vm
         run: |
-          VM_IP=$(grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' ~/vm/vm_ip.txt | head -n 1)
-          if [ -z "$VM_IP" ]; then
+          # Extraire l'IP du webserver (ou webserver2, selon votre besoin)
+          VM_IP=$(jq -r '.webserver' ~/vm/vm_ip.txt)
+          if [ -z "$VM_IP" ] || [ "$VM_IP" = "null" ]; then
             echo "Error: Could not extract VM IP"
             exit 1
           fi
