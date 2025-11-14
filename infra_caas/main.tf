@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "main" {
 
 # Azure Container Registry (optional)
 resource "random_string" "acr_suffix" {
-  length  = 6
+  length  = 10
   upper   = false
   special = false
 }
