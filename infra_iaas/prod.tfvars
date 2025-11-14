@@ -1,7 +1,7 @@
 # Varible secrets pour terraform environment prod
 project_name = "TerraCloud"
 environment = "prod"
-location = "West Europe"
+location = "francecentral"
 vm_size = "Standard_B1s"
 DB_location ="North Europe"
 admin_username = "admin_prod"
