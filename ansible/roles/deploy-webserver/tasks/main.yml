@@ -1,6 +1,5 @@
 #SPDX-License-Identifier: MIT-0
 ---
- #tasks file for deploy-database
 - name: Create directory for app
   file:
     path: /home/{{ ansible_user }}/app
