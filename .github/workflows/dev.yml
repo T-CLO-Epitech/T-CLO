@@ -206,32 +206,32 @@ jobs:
   #         terraform destroy  -auto-approve -var-file="dev.tfvars" 
     
 
-  # terraform-destroy-caac:
-  #   needs: terraform-apply-caac
-  #   runs-on: self-hosted
-  #   if: always()
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  terraform-destroy-caac:
+    needs: terraform-apply-caac
+    runs-on: self-hosted
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Set up Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.5.7
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
 
-  #     - name: Export Azure Service Principal creds for Terraform
-  #       run: |
-  #         echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
-  #         echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
-  #         echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
-  #         echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+      - name: Export Azure Service Principal creds for Terraform
+        run: |
+          echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
-  #     - name: Destroy VM
-  #       working-directory: infra_caas
-  #       run: |
-  #         export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
-  #         export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
-  #         terraform init -backend-config="path=terraform/dev/caas/${{ github.actor }}"
-  #         terraform destroy  -auto-approve -var-file="dev.tfvars"
+      - name: Destroy VM
+        working-directory: infra_caas
+        run: |
+          export TF_VAR_dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}
+          export TF_VAR_dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}
+          terraform init -backend-config="path=terraform/dev/caas/${{ github.actor }}"
+          terraform destroy  -auto-approve -var-file="dev.tfvars"
 
 
