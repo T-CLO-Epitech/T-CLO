@@ -58,18 +58,18 @@ jobs:
           terraform output -json public_ip > vm_ip.txt
 
 #      # ───── CAAS ─────
-      - name: Terraform Apply (CAAS)
-        if: needs.determine-type.outputs.deploy_type == 'caas'
-        working-directory: infra_caas
-        env:
-          TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          echo "Deploying CAAS PROD..."
-          terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
-          terraform validate
-          terraform plan -var-file="prod.tfvars"
-          terraform apply -auto-approve -var-file="prod.tfvars"
+     - name: Terraform Apply (CAAS)
+       if: needs.determine-type.outputs.deploy_type == 'caas'
+       working-directory: infra_caas
+       env:
+         TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+         TF_VAR_dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+       run: |
+         echo "Deploying CAAS PROD..."
+         terraform init -backend-config="path=terraform/prod/${GITHUB_REF_NAME}"
+         terraform validate
+         terraform plan -var-file="prod.tfvars"
+         terraform apply -auto-approve -var-file="prod.tfvars"
 
       - name: Upload inventory.ini as artifact
         if: needs.determine-type.outputs.deploy_type == 'iaas'
@@ -117,6 +117,8 @@ jobs:
           fi
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo "Using VM IP: $VM_IP"
+
+      
 
       - name: Setup SSH
         env:

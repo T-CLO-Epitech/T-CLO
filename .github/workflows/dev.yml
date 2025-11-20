@@ -34,7 +34,6 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
 
-
       - name: Create VM
         working-directory: infra_iaas
         run: |
@@ -189,8 +188,8 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7 
-          
+          terraform_version: 1.5.7
+
       - name: Export Azure Service Principal creds for Terraform
         run: |
           echo "ARM_CLIENT_ID=${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
@@ -200,13 +199,12 @@ jobs:
 
       - name: Destroy VM
         working-directory: infra_iaas
-        run: | 
+        run: |
           ls
           terraform init -backend-config="path=terraform/dev/iaas/${{ github.actor }}"
-          terraform destroy  -auto-approve -var-file="dev.tfvars" 
-    
+          terraform destroy  -auto-approve -var-file="dev.tfvars"
 
-  terraform-destroy-caac:
+ terraform-destroy-caac:
    needs: terraform-apply-caac
    runs-on: self-hosted
    if: always()
