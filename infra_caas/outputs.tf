@@ -30,3 +30,4 @@ output "multi_container_api_url" {
   description = "URL to access the API container in multi-container group"
   value       = "http://${azurerm_container_group.multi_container.fqdn}:3000"
 }
+

@@ -1,4 +1,6 @@
 environment = "dev"
 app_name = "my-docker-app"
-location = "eastus"
+location = "francecentral"
 resource_group_name = "my-docker-app-prod-rg" 
+db_password = "testPassword"
+dns_name_label = "my-docker-app-dev"

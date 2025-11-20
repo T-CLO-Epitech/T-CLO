@@ -34,3 +34,4 @@ services:
       - "traefik.http.routers.app.rule=HostRegexp(`.*`)"
       - "traefik.http.services.laravel.loadbalancer.server.port=80"
 
+
