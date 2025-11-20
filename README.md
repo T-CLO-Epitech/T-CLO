@@ -35,22 +35,7 @@ Déploiement d'une infrastructure traditionnelle avec :
 
 #### Platform as a Service (PaaS)
 Mise en œuvre d'une infrastructure plateforme avec :
-- Azure App Service
-- Azure SQL Database
 - Azure Container Instances (ACI)
-
-
-### 📊 Comparatif IaaS vs PaaS
-
-Le projet inclut une analyse détaillée comparant :
-
-| Critère | IaaS | PaaS |
-|---------|------|------|
-| **Déploiement** | Configuration manuelle des VMs | Déploiement rapide via la plateforme |
-| **Scalabilité** | Scaling vertical/horizontal manuel | Auto-scaling natif |
-| **Coûts** | Facturation par VM | Pay-per-use optimisé |
-| **Maintenance** | Gestion OS + middleware | Focus sur l'application |
-| **Flexibilité** | Contrôle total | Abstraction de l'infrastructure |
 
 ---
 
@@ -87,10 +72,22 @@ Explorez notre documentation complète pour approfondir chaque aspect du projet 
 <td width="100%">
 
 #### 📐 [Architecture Détaillée](./documentation/Infrastructure/Infra.md)
-Schémas complets de l'infrastructure et diagrammes de réseau
+Schémas de l'infrastructure Iaas et Caas
 
 </td>
 </table>
+
+### 🚀 Installation du Projet
+<table>
+<tr>
+<td width="100%">
+
+#### 🛠️ [Guide d'Installation](./documentation/developpeur/doc-du-nouvel-arrivant.md)
+Procédures pour installer et lancer le projet en local
+</td>
+</tr>
+</table>
+
 
 ### ⚙️ Guides de Déploiement
 
@@ -102,16 +99,14 @@ Schémas complets de l'infrastructure et diagrammes de réseau
 - Configuration des providers
 - Modules personnalisés
 - State management
-- Best practices
 
 </td>
 <td width="33%">
 
-#### 🐳 [Docker](./docs/docker/README.md)
-- Dockerfile optimisés
-- Docker Compose
-- Registry configuration
-- Multi-stage builds
+#### 🐙 [GitHub](./docs/github/README.md)
+- GitHub Actions workflows
+- Gitflow branching strategy
+- CI/CD pipelines
 
 </td>
 <td width="33%">
@@ -120,7 +115,6 @@ Schémas complets de l'infrastructure et diagrammes de réseau
 - Playbooks
 - Inventaires
 - Rôles et variables
-- Vault secrets
 
 </td>
 </tr>
@@ -131,13 +125,12 @@ Schémas complets de l'infrastructure et diagrammes de réseau
 <tr>
 <td width="100%">
 
-#### ⚖️ [Comparatif IaaS vs PaaS](./docs/comparison/README.md)
+#### ⚖️ [Comparatif IaaS vs PaaS](./documentation/comparatif/Comparatif.md)
 Analyse approfondie incluant :
 - **Performances** : Benchmarks et métriques
 - **Coûts** : TCO et optimisation budgétaire
 - **Opérations** : Maintenance et gestion quotidienne
 - **Scalabilité** : Capacités d'évolution
-- **Cas d'usage** : Recommandations par scénario
 
 </td>
 </tr>
