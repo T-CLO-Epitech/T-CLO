@@ -52,17 +52,17 @@ Lien du simulateur: https://azure.microsoft.com/en-us/pricing/calculator/
 
 #### Coût total IaaS
 
-| Durée   | minimum | maximum | 
-|---------|---------|---------|
-| 1 an    | 19159€  | 19273 € |
-| 3 ans   | 57309 € | 57818 € |
+| Durée   | minimum  | maximum  | 
+|---------|----------|----------|
+| 1 an    | 19 159 € | 19 273 € |
+| 3 ans   | 57 309 € | 57 818 € |
 
 #### Coût total PaaS
 
-| Durée   | minimum | maximum | 
-|---------|---------|---------|
-| 1 an    | 19159€  | 19273 € |
-| 3 ans   | 57309 € | 57818 € |
+| Durée   | minimum  | maximum  | 
+|---------|----------|----------|
+| 1 an    | 16 986 € | 19 188 € |
+| 3 ans   | 17 959 € | 24 564 € |
 
 
 ---
