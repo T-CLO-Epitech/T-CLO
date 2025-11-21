@@ -1,8 +1,15 @@
+<div align="center">
+
 # 🛠️ Guide d'Installation - Terracloud
 
-Ce guide vous accompagne dans l'installation et la configuration de l'environnement de développement pour le projet Terracloud.
+**Infrastructure Azure - IaaS & PaaS**
 
 ---
+
+</div>
+---
+Ce guide vous accompagne dans l'installation et la configuration de l'environnement de développement pour le projet Terracloud.
+
 
 ## 📋 Prérequis
 
