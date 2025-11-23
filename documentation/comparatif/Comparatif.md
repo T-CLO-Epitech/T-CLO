@@ -8,10 +8,6 @@
 
 </div>
 ---
-
-## 📊 Performances
-
----
 ## 💰 Analyse des Coûts
 
 ### Architecture IaaS
@@ -65,8 +61,7 @@ Lien du simulateur: https://azure.microsoft.com/en-us/pricing/calculator/
 | 3 ans   | 17 959 € | 24 564 € |
 
 
----
-## 📈 Scalabilité
+
 
 ---
 ## ✅ Avantages et Inconvénients
@@ -74,19 +69,30 @@ Lien du simulateur: https://azure.microsoft.com/en-us/pricing/calculator/
 
 ### IaaS
 
-| Avantages | Inconvénients |
-|-----------|---------------|
-| | |
-| | |
-| | |
+| Avantages                                                   | Inconvénients |
+|-------------------------------------------------------------|---------------|
+| Contrôle total sur l'OS et la configuration                 | Maintenance lourde (OS, sécurité, mises à jour)|
+| Flexibilité maximale pour configurations custom             |Temps de déploiement long (15-20 min) |
+| Portabilité facilitée (migration vers autres clouds)        |Coûts de maintenance élevés (~23 000 €/an) |
+| Coût infrastructure faible à faible trafic (159-309 €)      |Scaling lent (3-5 minutes) |
+| Adapté aux applications legacy nécessitant un OS spécifique |Sur-provisionnement nécessaire pour absorber les pics |
+| Prédictibilité des coûts (coûts fixes mensuels)             |Gestion manuelle du monitoring et de l'auto-healing |
+|                                                             |Expertise infrastructure requise |
+||Responsabilité sécurité plus importante (patches, CVE)|
+
 
 ### PaaS
 
 | Avantages | Inconvénients |
 |-----------|---------------|
-| | |
-| | |
-| | |
+| Déploiement ultra-rapide (2-3 minutes)| Coût plus élevé à fort trafic (>500M requêtes)|
+|Pas de maintenance infrastructure | Moins de contrôle sur l'infrastructure sous-jacente|
+|Auto-scaling automatique et rapide (< 30 sec) |Vendor lock-in (dépendance à Azure) |
+|Pay-per-use précis (optimisation coûts)|Complexité de migration vers autre cloud|
+|Sécurité managée (patches automatiques)|Limitations sur certaines configurations avancées|
+|Haute disponibilité native|Debugging limité au niveau conteneur|
+|Monitoring et logging intégrés||
+
 
 ---
 <div align="center">

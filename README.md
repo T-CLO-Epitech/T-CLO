@@ -89,36 +89,57 @@ Procédures pour installer et lancer le projet en local
 </table>
 
 
-### ⚙️ Guides de Déploiement
+[//]: # (### ⚙️ Guides de Déploiement)
 
-<table>
-<tr>
-<td width="33%">
+[//]: # ()
+[//]: # (<table>)
 
-#### 🔷 [Terraform](./docs/terraform/README.md)
-- Configuration des providers
-- Modules personnalisés
-- State management
+[//]: # (<tr>)
 
-</td>
-<td width="33%">
+[//]: # (<td width="33%">)
 
-#### 🐙 [GitHub](./docs/github/README.md)
-- GitHub Actions workflows
-- Gitflow branching strategy
-- CI/CD pipelines
+[//]: # ()
+[//]: # (#### 🔷 [Terraform]&#40;./docs/terraform/README.md&#41;)
 
-</td>
-<td width="33%">
+[//]: # (- Configuration des providers)
 
-#### 🔧 [Ansible](./docs/ansible/README.md)
-- Playbooks
-- Inventaires
-- Rôles et variables
+[//]: # (- Modules personnalisés)
 
-</td>
-</tr>
-</table>
+[//]: # (- State management)
+
+[//]: # ()
+[//]: # (</td>)
+
+[//]: # (<td width="33%">)
+
+[//]: # ()
+[//]: # (#### 🐙 [GitHub]&#40;./docs/github/README.md&#41;)
+
+[//]: # (- GitHub Actions workflows)
+
+[//]: # (- Gitflow branching strategy)
+
+[//]: # (- CI/CD pipelines)
+
+[//]: # ()
+[//]: # (</td>)
+
+[//]: # (<td width="33%">)
+
+[//]: # (#### 🔧 [Ansible]&#40;./docs/ansible/README.md&#41;)
+
+[//]: # (- Playbooks)
+
+[//]: # (- Inventaires)
+
+[//]: # (- Rôles et variables)
+
+[//]: # ()
+[//]: # (</td>)
+
+[//]: # (</tr>)
+
+[//]: # (</table>)
 
 ### 🔬 Études Comparatives
 <table>
@@ -127,10 +148,8 @@ Procédures pour installer et lancer le projet en local
 
 #### ⚖️ [Comparatif IaaS vs PaaS](./documentation/comparatif/Comparatif.md)
 Analyse approfondie incluant :
-- **Performances** : Benchmarks et métriques
-- **Coûts** : TCO et optimisation budgétaire
-- **Opérations** : Maintenance et gestion quotidienne
-- **Scalabilité** : Capacités d'évolution
+- **Coûts** 
+- **Avantages et Inconvénients**
 
 </td>
 </tr>
